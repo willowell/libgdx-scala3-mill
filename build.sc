@@ -55,9 +55,12 @@ object ScalacOptions {
       "-language:experimental.macros", // Allow macro definition (besides implementation and application)
       "-language:higherKinds",         // Allow higher-kinded types
       "-language:implicitConversions", // Allow definition of implicit functions called views
+      "-language:unsafeNulls",
       "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
       "-Xfatal-warnings",              // Fail the compilation if there are any warnings.
-      "-language:strictEquality"       // Scala 3 - Multiversal Equality, https://docs.scala-lang.org/scala3/book/ca-multiversal-equality.html
+      "-language:strictEquality",      // Scala 3 - Multiversal Equality, https://docs.scala-lang.org/scala3/book/ca-multiversal-equality.html
+      "-Yexplicit-nulls",
+      "-Ysafe-init"
     )
 
   lazy val test: Seq[String] =
@@ -70,7 +73,9 @@ object ScalacOptions {
       "-language:experimental.macros", // Allow macro definition (besides implementation and application)
       "-language:higherKinds",         // Allow higher-kinded types
       "-language:implicitConversions", // Allow definition of implicit functions called views
-      "-unchecked"                     // Enable additional warnings where generated code depends on assumptions.
+      "-unchecked",                     // Enable additional warnings where generated code depends on assumptions.
+      "-Yexplicit-nulls",
+      "-Ysafe-init"
     )
 }
 
@@ -84,6 +89,24 @@ object core extends ScalaModule with ScalafmtModule {
   override def ivyDeps = Agg(
     ivy"${orgs.gdx}:gdx:${versions.gdx}"
   )
+
+  override def scalacOptions = ScalacOptions.compile
+
+  object test extends Tests with TestModule.Munit with ScalafmtModule {
+    override def ivyDeps = Agg(
+      ivy"org.scalameta::munit::${versions.munit}"
+    )
+
+    override def scalacOptions = ScalacOptions.test
+  }
+}
+
+/**
+ * This is the `lib` project.
+ * The name of this module corresponds to the folder name.
+ */
+object lib extends ScalaModule with ScalafmtModule {
+  override def scalaVersion = versions.scala
 
   override def scalacOptions = ScalacOptions.compile
 
@@ -113,6 +136,8 @@ object desktop extends ScalaModule with ScalafmtModule {
     ivy"${orgs.gdx}:gdx-backend-lwjgl3:${versions.gdx}",
     ivy"${orgs.gdx}:gdx-platform:${versions.gdx};classifier=natives-desktop"
   )
+
+  override def scalacOptions = ScalacOptions.compile
 
   /**
    * Resources for this module.

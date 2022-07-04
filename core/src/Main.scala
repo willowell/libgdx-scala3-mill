@@ -6,18 +6,24 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.ScreenUtils
 
 class MyGdxGame extends ApplicationAdapter:
-  var batch: SpriteBatch = null
-  var img: Texture       = null
+  var batch: SpriteBatch | Null = null
+  var img: Texture | Null = null
 
   override def create(): Unit =
     batch = SpriteBatch()
     img = Texture("badlogic.jpg")
+
+  override def resize(width: Int, height: Int): Unit = ()
 
   override def render(): Unit =
     ScreenUtils.clear(1, 0, 0, 1)
     batch.begin()
     batch.draw(img, 0, 0)
     batch.end()
+
+  override def pause(): Unit = ()
+    
+  override def resume(): Unit = ()
 
   override def dispose(): Unit =
     batch.dispose()
